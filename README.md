@@ -1,32 +1,34 @@
-PHP Cross Domain (AJAX) Proxy
+php代理解决跨域问题
 ==============
 
-An application proxy that can be used to transparently transfer all kind of requests ( including of course XMLHTTPRequest ) to any third part domain. It is possible to define a list of acceptable third party domains and you are encouraged to do so. Otherwise the proxy is open to any kind of requests.
+通过php代理解跨域问题（XMLHTTPRequest，如ajax）。
+在一些场景中可以使用
+``` PHP
+header('Access-Control-Allow-Origin: *');
+```
+或者 `iframe` `jsonp` 能够解决部分问题。
+本项目采用php代理的方式，在不改动代码原代码的情况下，解决跨域问题。
+要求PHP 5.3+
+有兴趣的同学可以看看 [怎么跨域](http://enable-cors.org/server.html) （我还没看）.
 
-If it is possible to enable CORS on your application server, this proxy is not necessary. Have a look at [how you can enable CORS on your server](http://enable-cors.org/server.html) for further information.
-
-PHP 5.3+
-
-Installation
+使用
 --------------
 
-The proxy is indentionally limited to a single file. All you have to do is to place `proxy.php` under your application
-
-Whenever you want to make a cross domain request, just make a request to http://www.yourdomain.com/proxy.php and specify the cross domain URL by using `csurl` parameter. Obviously, you can add more parameters according to your needs; note that the rest of the parameters will be used in the cross domain request. For instance, if you are using jQuery:
+请求的地址是 `proxy.php` 的地址。
+需要带上 `csurl` 参数，也就是需要跨域的站点。
+当然可以使用其他方式请求，只要带上了 `csurl` 参数即可。
 
 ``` JAVASCRIPT
 $('#target').load(
-	'http://www.yourdomain.com/proxy.php', {
-		csurl: 'http://www.cross-domain.com/',
+	'http://{本地站点}/proxy.php', {
+		csurl: 'http://{需要跨域的站点}/',
 		param1: value1, 
 		param2: value2
 	}
 );
 ```
 
-It’s worth mentioning that all request methods are working GET, PUT, POST, DELETE are working and headers are taken into consideration. That is to say, headers sent from browser to proxy are used in the cross domain request and vice versa.
-
-You can also specify the URL with the `X-Proxy-URL` header, which might be easier to set with your JavaScript library. For example, if you wanted to automatically use the proxy for external URL targets, for GET and POST requests:
+可以根据 `X-Proxy-URL` 这个头部信息，使用js自行判断是否需要使用跨域代理, 如使用 `$.ajaxPrefilter` 前处理。
 
 ``` JAVASCRIPT
 $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
@@ -37,12 +39,12 @@ $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
 });
 ```
 
-Configuration
+设置
 --------------
 
-For security reasons don't forget to define all the valid requests into top section of `proxy.php` file:
+为了安全 `proxy.php` 文件最好设置下可以跨域的站点:
 
-``` JAVASCRIPT
+``` PHP
 $valid_requests = array(
 	'http://www.domainA.com/',
 	'http://www.domainB.com/path-to-services/service-a'
