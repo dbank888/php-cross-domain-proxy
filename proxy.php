@@ -23,13 +23,13 @@ define('CSAJAX_FILTER_DOMAIN', false);
 /**
  * Set debugging to true to receive additional messages - really helpful on development
  */
-define('CSAJAX_DEBUG', false);
+define('CSAJAX_DEBUG', true);
 
 /**
  * A set of valid cross domain requests
  */
 $valid_requests = array(
-    // 'example.com'
+     'http://112.124.11.61:3000/api'
 );
 
 /**
